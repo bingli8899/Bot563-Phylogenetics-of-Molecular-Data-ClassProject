@@ -227,11 +227,9 @@ $ conda install -c bioconda getorganelle # download getOrgenlle to the online se
 $ get_organelle_config.py --add embplant_pt,embplant_mt # download reference genome 
 
 
-````````
 
-Then, I tested whether getOrgenlle can work for my samples. All analysis of getOrganelle were conducted in Botany server. 
+# Then, I tested whether getOrgenlle can work for my samples. All analysis of getOrganelle were conducted in Botany server. 
 
-```````````
 
 # move some files from my local computer to the server 
 
