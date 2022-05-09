@@ -1,11 +1,12 @@
-Summary before doing analysis: 
+# Summary before doing analysis: 
 
 I chose to analyze the phylogeny of Clermontia, a Hawaiian lobeliad plant group. The dataset is located in the shared research drive named givnish file. First, I duplicated the lobeliads folder to make sure I will not damage or change any raw data. The new duplicated folder is renamed as “Bing_Lobeliads_copy” in givnish lab drive. This project will work on this folder. This folder contains an excel file, named “Hawaiian lobelias samples 2021”, lists the sample ID and species name, because this dataset is large. The folder called “assemblies” contain assembled sequences but these assemblies cannot be used because the method was designed by a student and is not pubslished. The folder named “raw reads” contains all the raw reads data. For this project, I will use the "raw data" folder. 
+
+# TRIMMOMATIC 
 
 I decided to use raw reads and assemble plastome to understand the phylogeny. First, I run FastQC for ten samples and found that these samples have not be trimmed for adaptors. Because I plan to use getOrangelle to assemble the plastome, which requires adaptor-trimmed sequences. Thus, I first used TRIMMOMATIC version 0.39 to remove adaptor sequences but didn't do anything for quality control. Because my data were collected from illumina hyseq, I used the universal adaptor set designed for Illumina Hyseq developed by TRIMMOMATIC version 0.39. 
 
 I decided to cover the whole genus with 27 samples and one outgroup sample (I19593). 
-
 
 Dara were stored in my research drive.
 I first tried TRIMMOMATIC version 0.39 for the following code for single end sequencing. I didn't use any online server and I downloaded the software from github: https://github.com/usadellab/Trimmomatic
@@ -213,7 +214,7 @@ $ java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE
 $ java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE P0174_TG_I19654_TGCCTGCG_L001_R1_001.fastq.gz P0174_TG_I19654_TGCCTGCG_L001_R2_001.fastq.gz ../../Trimmed_reads/I19654/I19654_R1_paried_output.fq.gz ../../Trimmed_reads/I19654/I19654_R1_unparied_output.fq.gz ../../Trimmed_reads/I19654/I19654_R2_paired_output.fq.gz ../../Trimmed_reads/I19654/I19654_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True LEADING:3 TRAILING:3 MINLEN:36
 ````` 
 
-
+# getOrganelle 
 
 Then, I downloaded GetOrgenlle to Botany server by the following code. GetOrganelle needs to use miniconda, so I downloaded miniconda to both Botany server provided by Steve and CHTC. The installation of miniconda in botany server is shown as below and that in CHTC is referred to the website of CHTC: https://chtc.cs.wisc.edu/uw-research-computing/conda-installation. 
 
@@ -238,7 +239,7 @@ $ scp /Users/bingli/Desktop/*.fq.gz bli283@pink.botany.wisc.edu:/home/bli283/dat
 
 $ get_organelle_from_reads.py -1 I19593_R1_paried_output.fq.gz -2 I19593_R2_paired_output.fq.gz -o I19593_plast_output -R 15 -k 21,45,65,85,105 -F embplant_pt
 
-# The code works well! 
+# The code works well but assembly is bad -- shown in bandage 
 # then, I added a clermontia complete genome as a seed database. The genome is downloaded from genebank NC_035355. Code with seed database as following: 
 
 $ get_organelle_from_reads.py -s ../NC_035355.1.fasta -1 I19593_R1_paried_output.fq.gz -2 I19593_R2_paired_output.fq.gz -o I19593_plast_output -R 15 -k 21,45,65,85,105 -F embplant_pt
@@ -314,38 +315,52 @@ get_organelle_from_reads.py -1 /mnt/researchdrive/givnish/Bing_Lobeliads_copy/Ra
 get_organelle_from_reads.py -1 /mnt/researchdrive/givnish/Bing_Lobeliads_copy/RawReads/Clermontia/Trimmed_reads/I26254/I26254_R1_paried_output.fq.gz -2 /mnt/researchdrive/givnish/Bing_Lobeliads_copy/RawReads/Clermontia/Trimmed_reads/I26254/I26254_R2_paired_output.fq.gz -o I26254_plast_output -R 15 -k 21,45,65,85,105,127 -F embplant_pt
 
 ```````` 
+
+# MAFFT 
+
 Those are all samples assembled by getOrgenalle. Then, I extract the output files "extended_K127.assembly_graph.fastg" and map it to reference by geneious. The reference genome is NC_035355 in geneBank. I manually trimmed the end and beignning of each contigs. I also deleted short contigs with larger dissimilarity of the reference genome. 
 
 Then, I used MAFFT with argumentS --auto and --nwildcard. The argument --auto will automatically calulcate the best algorithum. 
+
+Then, I downloaded the mafft_output_untrimmed and trimmed with Geneious. I trimmed any sites with 30 np longer and have low identity to generate file named mafft_output_trimmed.fasta. Both trimmed and untrimmed datasets were used for downstream analysis. 
 
 ``````
 # In my server with assembly mapped to the reference 
 $ cat consensus_assembly/*.fasta > total_consensus
 $ mafft --auto --nwildcard total_consensus > mafft_output_untrimmed 
 
-# I used this untrimmed mafft file for a ML tree using IQtree 
-# I also used model finder built in IQ-tree to find the best model 
+
+````````
+# IQ-TREE
+
+I used this untrimmed mafft file for a ML tree using IQtree. 
+I also used model finder built in IQ-tree to find the best model 
+
+
+```````
+# for untrimmed data 
 $ iqtree -s ../mafft_output_untrimmed -m MF # This finds the best model without doing the tree 
 # The best model found by modelfinder is TVM+F+R2 
 $ iqtree -s mafft_output_untrimmed -m TVM+F+R2 -alrt 1000 -bb 1000
 # I included 1000 replicate SH-alrt and 1000 replicate of ultrafast bootstrap 
 
-`````````````
-Then, I downloaded the mafft_output_untrimmed and trimmed with Geneious. I trimmed any sites with 30 np longer and have low identity to generate file named mafft_output_trimmed.fasta. Both trimmed and untrimmed datasets were used for downstream analysis. 
 
-````````````
+# for trimmed data 
 $ iqtree -s mafft_output_trimmed.fasta -m MF # Use the trimmed file to test the best model. The best model is still TVM+F+R2 
 
 $ iqtree -s mafft_output_trimmed.fasta -m TVM+F+R2 -alrt 1000 -bb 1000 
 
 ````````````
 
+# MrBayes 
+
 Then, I used Mrbayes (downloaded into the botany server) to generate a bayesian tree. 
 I downloaded Mrbayes by using this link https://github.com/NBISweden/MrBayes/blob/develop/INSTALL around line 70~ 
 I first used modelfinder built in iqtree with argument -m TEST 
 
 ````````````
--iqtree -s untrimmed_fastat -m TEST 
+$ iqtree -s trimmed_output.fasta -m TEST
+$ iqtree -s untrimmed_output.fasta -m TEST 
 
 ````````````
 
@@ -354,21 +369,16 @@ I first used modelfinder built in iqtree with argument -m TEST
 To use Mrbayes in online server, I need to export PATH everything by:
 
 
+
 ````````````
 $ export PATH=$PATH:/home/bli283/MrBayes/src
 
 ````````````
 
-Before using MrBayes, because TVM is not built in MrBayes. 
-I used ModleFinder and use --m TEST to resemble JModelTest 
+This is the mbblock.txt 
 
-````````````
-$ iqtree -s trimmed_output.fasta -m TEST
-$ iqtree -s untrimmed_output.fasta -m TEST 
+```````````
 
-````````````
-
-# This is the mbblock.txt 
 $ begin mrbayes;
  set autoclose=yes;
  set quitonerror=no;
