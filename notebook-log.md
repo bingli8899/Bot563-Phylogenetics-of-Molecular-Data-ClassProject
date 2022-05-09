@@ -226,11 +226,13 @@ $ bash bash Miniconda3-latest-Linux-x86_64.sh # I changed the file name here to 
 $ conda install -c bioconda getorganelle # download getOrgenlle to the online server 
 $ get_organelle_config.py --add embplant_pt,embplant_mt # download reference genome 
 
-````
+
+````````
 
 Then, I tested whether getOrgenlle can work for my samples. All analysis of getOrganelle were conducted in Botany server. 
 
-`````
+```````````
+
 # move some files from my local computer to the server 
 
 $ scp /Users/bingli/Desktop/*.fq.gz bli283@pink.botany.wisc.edu:/home/bli283/data/I19593
@@ -333,7 +335,7 @@ $ mafft --auto --nwildcard total_consensus > mafft_output_untrimmed
 ````````
 # IQ-TREE
 
-I used this untrimmed mafft file for a ML tree using IQtree. 
+I tested this untrimmed mafft file for a ML tree using IQtree. After that, I applied to the untrimmed data. 
 I also used model finder built in IQ-tree to find the best model 
 
 
