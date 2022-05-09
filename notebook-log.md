@@ -8,7 +8,7 @@ I decided to cover the whole genus with 27 samples and one outgroup sample (I195
 
 
 Dara were stored in my research drive.
-I first tried TRIMMOMATIC for the following code for single end sequencing: 
+I first tried TRIMMOMATIC version 0.39 for the following code for single end sequencing. I didn't use any online server and I downloaded the software from github: https://github.com/usadellab/Trimmomatic
 
 `````
 % Volumes/givnish/Bing_Lobeliads_copy/RawReads/Clermontia/Trail/Individual sample folder
@@ -20,39 +20,17 @@ This worked fine. Then, I tried the code for pair-end sequencing and created fou
 
 `````
 % /in working directory/
-For sample I19593
+# For sample I19593
 
 % java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE P0174_TG_I19593_AGAGTAGA_L001_R1_001.fastq.gz P0174_TG_I19593_AGAGTAGA_L001_R2_001.fastq.gz I19593_R1_paried_output.fq.gz I19593_R1_unparied_output.fq.gz I19593_R2_paired_output.fq.gz I19593_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True
 
 ````
 
-I run the output files in FasQC to check if adapters are removed -- Yes, adapters are clearly removed. 
+I run the output files in FastQC to check if adapters are removed -- Yes, adapters are clearly removed. 
 
-Then, I run the above trimmomatic code for every samples. 
+Then, I run the above Trimmomatic code for every samples. It is noted that I run Trimmomatic to all Clermontia sample I have (~40) not just the 27 samples used for this project. Those data can be useful to my future study. 
 
-````
-# for sample 19642
- % java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE P0174_TG_I19642_CCTATCTC_L001_R1_001.fastq.gz P0174_TG_I19642_CCTATCTC_L001_R2_001.fastq.gz I19642_R1_paried_output.fq.gz I19642_R1_unparied_output.fq.gz I19642_R2_paired_output.fq.gz I19642_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True
-
-# For sample 26254
- % java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE P0174_TG_I26254_CTCGTTAT_L001_R1_001.fastq.gz P0174_TG_I26254_CTCGTTAT_L001_R2_001.fastq.gz I26254_R1_paried_output.fq.gz I26254_R1_unparied_output.fq.gz I26254_R2_paired_output.fq.gz I26254_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True
-
-# for sample 19629
-% java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE P0174_TG_I19629_TTATAACT_L001_R1_001.fastq.gz P0174_TG_I19629_TTATAACT_L001_R2_001.fastq.gz I19629_R1_paried_output.fq.gz I19629_R1_unparied_output.fq.gz I19629_R2_paired_output.fq.gz I19629_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True
-
-# for sample 19652
-% java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE P0174_TG_I19652_GTTCTACG_L001_R1_001.fastq.gz P0174_TG_I19652_GTTCTACG_L001_R2_001.fastq.gz I19652_R1_paried_output.fq.gz I19652_R1_unparied_output.fq.gz I19652_R2_paired_output.fq.gz I19652_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True
-
-# for sample 19630
-% java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE P0174_TG_I19630_TTCGATGA_L001_R1_001.fastq.gz P0174_TG_I19630_TTCGATGA_L001_R2_001.fastq.gz I19630_R1_paried_output.fq.gz I19630_R1_unparied_output.fq.gz I19630_R2_paired_output.fq.gz I19630_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True
-
-# for sample I19653
-% java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE P0174_TG_I19653_TCCGTATA_L001_R1_001.fastq.gz P0174_TG_I19653_TCCGTATA_L001_R2_001.fastq.gz I19653_R1_paried_output.fq.gz I19653_R1_unparied_output.fq.gz I19653_R2_paired_output.fq.gz I19653_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True
-
-
-```` 
-Then, I need to change my trimmomatic setting for all my samples. Many of the samples with quality control is not included in the final analysis due to time. 
-I first created a sub-folder called trimmed_reads and this folder contains sub-directionaries for each sample. 
+One step: I first run trimmomatic without -- LEADING:3 TRAILING:3 MINLEN:36, because getOrganelle recommends to use untrimmed, adaptor-removed data. However, I compared the output generated from trimmed and untrimmed data by using visualization tool (BANDAGE, use Geneious should also be fine), and I think using trimmed data including LEADING:3 TRAILING:3 MINLEN:36 is better. 
 
 ```` 
 # Srart with sample I19631 
@@ -135,6 +113,7 @@ $ cat P0174_TG_I26246_CCATAGTC_L001_R2_001.fastq.gz P0174_TG_I26246_CCATAGTC_L00
 $ java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE merged_R1.fq.gz merged_R2.fq.gz ../../Trimmed_reads/I26246/I26246_R1_paried_output.fq.gz ../../Trimmed_reads/I26246/I26246_R1_unparied_output.fq.gz ../../Trimmed_reads/I26246/I26246_R2_paired_output.fq.gz ../../Trimmed_reads/I26246/I26246_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True LEADING:3 TRAILING:3 MINLEN:36
 
 # for sample I26277
+# samples with two file needs to be "cat" first 
 $ cat P0174_TG_I26277_TTCATACG_L001_R1_001.fastq.gz P0174_TG_I26277_TTCATACG_L001_R1_002.fastq.gz > merged_R1.fq.gz 
 $ cat P0174_TG_I26277_TTCATACG_L001_R2_001.fastq.gz P0174_TG_I26277_TTCATACG_L001_R2_002.fastq.gz > merged_R2.fq.gz 
 $ java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE merged_R1.fq.gz merged_R2.fq.gz ../../Trimmed_reads/I26277/I26277_R1_paried_output.fq.gz ../../Trimmed_reads/I26277/I26277_R1_unparied_output.fq.gz ../../Trimmed_reads/I26277/I26277_R2_paired_output.fq.gz ../../Trimmed_reads/I26277/I26277_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True LEADING:3 TRAILING:3 MINLEN:36
@@ -233,10 +212,13 @@ $ java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE
 # for sample I19654 
 $ java -jar /Users/bingli/Desktop/Trail/Trimmomatic-0.39/trimmomatic-0.39.jar PE P0174_TG_I19654_TGCCTGCG_L001_R1_001.fastq.gz P0174_TG_I19654_TGCCTGCG_L001_R2_001.fastq.gz ../../Trimmed_reads/I19654/I19654_R1_paried_output.fq.gz ../../Trimmed_reads/I19654/I19654_R1_unparied_output.fq.gz ../../Trimmed_reads/I19654/I19654_R2_paired_output.fq.gz ../../Trimmed_reads/I19654/I19654_R2_unpaired_output.fq.gz ILLUMINACLIP:/Users/bingli/Desktop/Trail/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True LEADING:3 TRAILING:3 MINLEN:36
 ````` 
-Then, I downloaded GetOrgenlle to Botany server by the following code: 
+
+
+
+Then, I downloaded GetOrgenlle to Botany server by the following code. GetOrganelle needs to use miniconda, so I downloaded miniconda to both Botany server provided by Steve and CHTC. The installation of miniconda in botany server is shown as below and that in CHTC is referred to the website of CHTC: https://chtc.cs.wisc.edu/uw-research-computing/conda-installation. 
+
 
 ``````
-
 $ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 $ bash bash Miniconda3-latest-Linux-x86_64.sh # I changed the file name here to match the file name I downloaded, and these two codes set up for miniconda environment 
 
@@ -245,7 +227,7 @@ $ get_organelle_config.py --add embplant_pt,embplant_mt # download reference gen
 
 ````
 
-Then, I tested whether getOrgenlle can work for my samples. 
+Then, I tested whether getOrgenlle can work for my samples. All analysis of getOrganelle were conducted in Botany server. 
 
 `````
 # move some files from my local computer to the server 
@@ -332,9 +314,9 @@ get_organelle_from_reads.py -1 /mnt/researchdrive/givnish/Bing_Lobeliads_copy/Ra
 get_organelle_from_reads.py -1 /mnt/researchdrive/givnish/Bing_Lobeliads_copy/RawReads/Clermontia/Trimmed_reads/I26254/I26254_R1_paried_output.fq.gz -2 /mnt/researchdrive/givnish/Bing_Lobeliads_copy/RawReads/Clermontia/Trimmed_reads/I26254/I26254_R2_paired_output.fq.gz -o I26254_plast_output -R 15 -k 21,45,65,85,105,127 -F embplant_pt
 
 ```````` 
-# Those are all samples assembled by getOrgenalle. Then, I extract the output files "extended_K127.assembly_graph.fastg" and map it to reference by geneious. The reference genome is NC_035355 in geneBank. I manually trimmed the end and beignning of each contigs. I also deleted short contigs with larger dissimilarity of the reference genome. 
+Those are all samples assembled by getOrgenalle. Then, I extract the output files "extended_K127.assembly_graph.fastg" and map it to reference by geneious. The reference genome is NC_035355 in geneBank. I manually trimmed the end and beignning of each contigs. I also deleted short contigs with larger dissimilarity of the reference genome. 
 
-# Then, I used MAFFT with argumentS --auto and --nwildcard. The argument --auto will automatically calulcate the best algorithum. 
+Then, I used MAFFT with argumentS --auto and --nwildcard. The argument --auto will automatically calulcate the best algorithum. 
 
 ``````
 # In my server with assembly mapped to the reference 
@@ -360,8 +342,10 @@ $ iqtree -s mafft_output_trimmed.fasta -m TVM+F+R2 -alrt 1000 -bb 1000
 Then, I used Mrbayes (downloaded into the botany server) to generate a bayesian tree. 
 I downloaded Mrbayes by using this link https://github.com/NBISweden/MrBayes/blob/develop/INSTALL around line 70~ 
 I first used modelfinder built in iqtree with argument -m TEST 
+
 ``` 
--iqtree untrimmed_fastat -m TEST 
+-iqtree -s untrimmed_fastat -m TEST 
+
 # This can resemble jModelTest which is recommended by the developers of MrBayes. Also, the top and second best model generated by the argument -m MF (regular modelfinder) are all TVM, and TVM is not built in Mrbayes. The best model given by this command is TVM and thus I chose the second best model, GTR+F+I+G4. 
 
 # To use Mrbayes in online server, I need to export PATH everything by:
