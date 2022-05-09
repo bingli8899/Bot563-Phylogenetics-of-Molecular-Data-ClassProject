@@ -1,0 +1,33 @@
+# The excutable file 
+log = getOrgelle_test_$(CLUSTER).log
+executable = getOrgenlle2.sh 
+arguments = $(SAMPLE_ID)
+output = getOrgenlle_test_$(CLUSTER).out
+error = getOrgelle_test_$(CLUSTER).err
+transfer_input_files = http://proxy.chtc.wisc.edu/SQUID/bli283/env_getOrgenlle.tar.gz
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+Requirements = (Target.HasCHTCStaging == true)
+request_cpus = 10
+request_memory = 8GB 
+request_disk = 5GB
+queue SAMPLE_ID from sample_list.txt 
+
+# The submit file 
+#!/bin/bash
+SAMPLE_ID=$1
+ENVNAME=env_getOrgenlle
+ENVDIR=$ENVNAME
+export PATH
+mkdir $ENVDIR
+tar -xzf $ENVNAME.tar.gz -C $ENVDIR
+. $ENVDIR/bin/activate
+echo $PATH
+echo $PYTHONPATH
+which python
+python -c'import sys; print(sys.path)'
+GETORG_PATH=/staging/bli283/.GetOrganelle
+export GETORG_PATH
+cp -r /staging/bli283/Trimmed_reads/ .
+get_organelle_from_reads.py -1 Trimmed_reads/${SAMPLE_ID}/${SAMPLE_ID}_R1_paried_output.fq.gz -2 Trimmed_reads/${SAMPLE_ID}/${SAMPLE_ID}_R2_paired_output.fq.gz -o ${SAMPLE_ID}_assembly_output -R 15 -k 21,45,65,85,105,127 -F embplant_pt
+mv ${SAMPLE_ID}_assembly_output /staging/bli283/assembly/ 
