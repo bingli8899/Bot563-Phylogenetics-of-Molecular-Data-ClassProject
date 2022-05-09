@@ -405,6 +405,7 @@ $ mb trimmed_data.nex
 $ mb untrimmed_data.nex 
 
 ````````````
+# Tree editting using R 
 Then, the output tree file was visually editted in FigTree. Iq-tree works fine with changing tip names through this R code below：
  
 ````````````
